@@ -18,8 +18,8 @@ COPY . .
 CMD ["mkdir", "data"]
 
 # Create non-root user
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
+#RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+#USER appuser
 
 # Expose port
 EXPOSE 8000
