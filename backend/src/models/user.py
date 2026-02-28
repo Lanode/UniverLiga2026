@@ -9,7 +9,6 @@ from ..database import Base
 
 if TYPE_CHECKING:
     from .feedback import Feedback, FeedbackResponse
-    from ..models import Item
 
 
 class User(Base):
@@ -27,11 +26,6 @@ class User(Base):
     )
     updated_at: Mapped[Optional[datetime]] = mapped_column(
         onupdate=func.now(), nullable=True
-    )
-    
-    # Relationship with items
-    items: Mapped[List["Item"]] = relationship(
-        "Item", back_populates="owner", cascade="all, delete-orphan"
     )
     
     # Relationships with feedback models
