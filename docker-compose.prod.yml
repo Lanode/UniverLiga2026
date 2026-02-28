@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3
+    container_name: univerliga-traefik
+    command:
+      - --api.dashboard=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.email=lar4encko.mischa@gmail.com
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    networks:
+      - univerliga-network
+    restart: unless-stopped
+
+  backend:
+    extends:
+      file: docker-compose.yml
+      service: backend
+    environment:
+      - ALLOWED_ORIGINS=https://univerliga2026.flaystw.ru
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.rule=PathPrefix(`/api`)
+      - traefik.http.routers.backend.middlewares=api-stripprefix
+      - traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/api
+      - traefik.http.services.backend.loadbalancer.server.port=8000
+      - traefik.http.routers.backend.tls.certresolver=letsencrypt
+      - traefik.http.routers.backend.tls=true
+
+  frontend:
+    extends:
+      file: docker-compose.yml
+      service: frontend
+    environment:
+      - VITE_API_URL=https://univerliga2026.flaystw.ru/api
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=Host(`univerliga2026.flaystw.ru`)
+      - traefik.http.routers.frontend.tls.certresolver=letsencrypt
+      - traefik.http.routers.frontend.tls=true
+      - traefik.http.services.frontend.loadbalancer.server.port=80
+
+networks:
+  univerliga-network:
+    driver: bridge
+
+volumes:
+  letsencrypt:

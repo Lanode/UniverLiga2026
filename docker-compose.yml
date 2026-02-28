@@ -6,8 +6,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: univerliga-backend
-    ports:
-      - "8000:8000"
     environment:
       - DEBUG=false
       - DATABASE_URL=sqlite:///./app.db
@@ -31,8 +29,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: univerliga-frontend
-    ports:
-      - "80:80"
     environment:
       - VITE_API_URL=http://localhost:8000
     depends_on:
