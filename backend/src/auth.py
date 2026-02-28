@@ -12,6 +12,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from . import models
 from .utils import verify_password
 
+from .routers.auth import get_user_by_username
+
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
