@@ -7,7 +7,10 @@ from .. import schemas
 from ..auth import (
     authenticate_user,
     create_access_token,
-    get_current_active_user
+    get_current_active_user,
+    get_user_by_email,
+    get_user_by_username,
+    create_user
 )
 from ..config import settings
 from ..database import get_db
