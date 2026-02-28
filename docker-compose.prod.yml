@@ -36,6 +36,8 @@ services:
       - traefik.http.services.backend.loadbalancer.server.port=8000
       # - traefik.http.routers.backend.tls.certresolver=letsencrypt
       # - traefik.http.routers.backend.tls=true
+    volumes:
+      - ./backend/data:/app/data
 
   frontend:
     extends:
