@@ -1,11 +1,14 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 
 from sqlalchemy import Boolean, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 from .database import Base
+
+if TYPE_CHECKING:
+    from .models.feedback import Feedback, FeedbackResponse
 
 
 class User(Base):
@@ -28,6 +31,14 @@ class User(Base):
     # Relationship with items
     items: Mapped[List["Item"]] = relationship(
         "Item", back_populates="owner", cascade="all, delete-orphan"
+    )
+    
+    # Relationships with feedback models
+    feedbacks: Mapped[List["Feedback"]] = relationship(
+        "Feedback", back_populates="user", cascade="all, delete-orphan"
+    )
+    feedback_responses: Mapped[List["FeedbackResponse"]] = relationship(
+        "FeedbackResponse", back_populates="responder", cascade="all, delete-orphan"
     )
 
 
