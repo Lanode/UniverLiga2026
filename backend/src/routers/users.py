@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .. import schemas
 from ..auth import get_current_active_user, get_current_superuser
 from ..database import get_db
-from ..models import User
+from ..models.user import User
 from ..utils import get_password_hash
 
 # User CRUD operations

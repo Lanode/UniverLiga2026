@@ -6,7 +6,7 @@ from sqlalchemy import Boolean, Integer, String, Text, ForeignKey, DateTime, Enu
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
-from ..models import User
+from .user import User
 
 from ..database import Base
 

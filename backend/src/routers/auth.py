@@ -13,7 +13,7 @@ from ..auth import (
 )
 from ..config import settings
 from ..database import get_db
-from ..models import User
+from ..models.user import User
 from ..utils import get_password_hash
 
 # Auth-specific CRUD operations
