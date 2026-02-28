@@ -12,7 +12,7 @@ services:
       - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-production}
       - ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,http://frontend:80
     volumes:
-      - ./backend/data:/app/data
+      - backend_data:/app/data
     # healthcheck:
     #   test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=2)"]
     #   interval: 30s
@@ -36,6 +36,9 @@ services:
     networks:
       - univerliga-network
     restart: unless-stopped
+
+volumes:
+  backend_data:
 
 networks:
   univerliga-network:
