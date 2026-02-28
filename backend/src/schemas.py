@@ -6,7 +6,7 @@ from enum import Enum
 
 # User Schemas
 class UserBase(BaseModel):
-    email: EmailStr
+    email: str
     username: str
     full_name: Optional[str] = None
 
