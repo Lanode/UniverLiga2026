@@ -10,7 +10,6 @@ from .config import settings
 from .database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from . import models
-from .crud import get_user_by_username
 from .utils import verify_password
 
 # OAuth2 scheme

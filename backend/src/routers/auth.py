@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .. import schemas, crud
+from .. import schemas
 from ..auth import (
     authenticate_user,
     create_access_token,
@@ -11,6 +11,39 @@ from ..auth import (
 )
 from ..config import settings
 from ..database import get_db
+from ..models import User
+from ..utils import get_password_hash
+
+# Auth-specific CRUD operations
+async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
+    """Get a user by email."""
+    result = await db.execute(
+        select(User).where(User.email == email)
+    )
+    return result.scalar_one_or_none()
+
+
+async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User]:
+    """Get a user by username."""
+    result = await db.execute(
+        select(User).where(User.username == username)
+    )
+    return result.scalar_one_or_none()
+
+
+async def create_user(db: AsyncSession, user: schemas.UserCreate) -> User:
+    """Create a new user."""
+    hashed_password = get_password_hash(user.password)
+    db_user = User(
+        email=user.email,
+        username=user.username,
+        full_name=user.full_name,
+        hashed_password=hashed_password
+    )
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -22,14 +55,14 @@ async def register(
 ):
     """Register a new user."""
     # Check if user already exists
-    db_user = await crud.get_user_by_email(db, email=user_data.email)
+    db_user = await get_user_by_email(db, email=user_data.email)
     if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
     
-    db_user = await crud.get_user_by_username(db, username=user_data.username)
+    db_user = await get_user_by_username(db, username=user_data.username)
     if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -37,7 +70,7 @@ async def register(
         )
     
     # Create new user
-    return await crud.create_user(db=db, user=user_data)
+    return await create_user(db=db, user=user_data)
 
 
 @router.post("/login", response_model=schemas.Token)
