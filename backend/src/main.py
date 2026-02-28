@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import asyncio
@@ -38,28 +38,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-API_PREFIX = "/api/v1"
+api_router = APIRouter(prefix=settings.BASE_PATH)
 
-# Include routers
-app.include_router(auth.router, prefix=API_PREFIX)
-app.include_router(users.router, prefix=API_PREFIX)
-app.include_router(items.router, prefix=API_PREFIX)
+# Подключаем модули внутрь общего роутера
+api_router.include_router(auth.router)
+api_router.include_router(users.router)
+api_router.include_router(items.router)
 
-
-@app.get("/")
+# Системные endpoints тоже туда
+@api_router.get("/")
 def read_root():
-    """Root endpoint with API information."""
     return {
         "message": "Welcome to UniverLiga Backend API",
         "docs": "/docs",
         "version": "1.0.0"
     }
 
-
-@app.get("/health")
+@api_router.get("/health")
 def health_check():
-    """Health check endpoint."""
     return {"status": "healthy"}
+
+# И только один раз подключаем к app
+app.include_router(api_router)
 
 
 if __name__ == "__main__":
