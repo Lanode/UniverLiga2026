@@ -58,3 +58,4 @@ networks:
 volumes:
   letsencrypt:
   backend_data:
+    external: true
