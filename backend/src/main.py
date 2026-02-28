@@ -7,6 +7,9 @@ from .config import settings
 from .database import engine, Base
 from .routers import auth, users, feedback, quastionare, report
 
+# Import models to ensure SQLAlchemy discovers them
+from .models import User, Feedback, FeedbackSubcategory, FeedbackResponse, Quastionare, Question, Answer
+
 # Create FastAPI app
 app = FastAPI(
     title=settings.APP_NAME,
@@ -20,12 +23,30 @@ app = FastAPI(
 async def create_tables():
     """Create database tables asynchronously."""
     async with engine.begin() as conn:
+        # Get list of tables before creation
+        def get_existing_tables(sync_conn):
+            from sqlalchemy import inspect
+            inspector = inspect(sync_conn)
+            return inspector.get_table_names()
+        
+        existing_tables = await conn.run_sync(get_existing_tables)
+        print(f"Existing tables before creation: {existing_tables}")
+        
+        # Create all tables
         await conn.run_sync(Base.metadata.create_all)
+        
+        # Get list of tables after creation
+        new_tables = await conn.run_sync(get_existing_tables)
+        created_tables = [t for t in new_tables if t not in existing_tables]
+        
+        print(f"Created {len(created_tables)} new tables: {created_tables}")
+        print(f"Total tables in database: {len(new_tables)}")
 
 # Startup event to create tables
 @app.on_event("startup")
 async def on_startup():
     """Create database tables on application startup."""
+    print("Starting database initialization...")
     await create_tables()
     print("Database tables created successfully")
 
