@@ -5,7 +5,7 @@ import asyncio
 
 from .config import settings
 from .database import engine, Base
-from .routers import auth, users, feedback
+from .routers import auth, users, feedback, quastionare, report
 
 # Create FastAPI app
 app = FastAPI(
@@ -44,6 +44,8 @@ api_router = APIRouter(prefix=settings.BASE_PATH)
 api_router.include_router(auth.router)
 api_router.include_router(users.router)
 api_router.include_router(feedback.router)
+api_router.include_router(quastionare.router)
+api_router.include_router(report.router)
 
 # Системные endpoints тоже туда
 @api_router.get("/")
