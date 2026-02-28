@@ -32,6 +32,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.backend.rule=PathPrefix(`/api`)
+      - traefik.http.routers.backend.priority=100
       - traefik.http.routers.backend.middlewares=api-stripprefix
       - traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/api
       - traefik.http.services.backend.loadbalancer.server.port=8000
@@ -47,6 +48,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.frontend.rule=Host(`univerliga2026.flaystw.ru`)
+      - traefik.http.routers.frontend.priority=1
       - traefik.http.routers.frontend.tls.certresolver=letsencrypt
       - traefik.http.routers.frontend.tls=true
       - traefik.http.services.frontend.loadbalancer.server.port=80
