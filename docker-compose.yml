@@ -11,8 +11,8 @@ services:
       - DATABASE_URL=sqlite:///./data/app.db
       - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-production}
       - ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,http://frontend:80
-#    volumes:
-#      - ./backend/data:/app/data
+    volumes:
+      - data:/app/data
     # healthcheck:
     #   test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=2)"]
     #   interval: 30s
