@@ -7,14 +7,14 @@ router = APIRouter(prefix="/feedback", tags=["feedback"])
 
 @router.post("/") #
 def create_feedback(
-    current_user: schemas.User = Depends(get_current_active_user)
+        current_user: schemas.User = Depends(get_current_active_user)
 ):
     return {"status": "created"}
 
 @router.get("/{item_id}")
 def read_feedback(
         item_id: int,
-    current_user: schemas.User = Depends(get_current_active_user)
+        current_user: schemas.User = Depends(get_current_active_user)
 ):
     return {"status": item_id}
 
