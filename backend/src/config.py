@@ -6,7 +6,7 @@ from pydantic import Field
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "sqlite:///./app.db"
+    DATABASE_URL: str = "sqlite:///./data/app.db"
     
     # JWT
     SECRET_KEY: str = "your-secret-key-here-change-in-production"
