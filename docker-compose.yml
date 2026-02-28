@@ -39,7 +39,6 @@ services:
 
 volumes:
   backend_data:
-    external: true
 
 networks:
   univerliga-network:
