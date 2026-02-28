@@ -33,8 +33,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.backend.rule=PathPrefix(`/api`)
       - traefik.http.routers.backend.priority=100
-      - traefik.http.routers.backend.middlewares=api-stripprefix
-      - traefik.http.middlewares.api-stripprefix.stripprefix.prefixes=/api
       - traefik.http.services.backend.loadbalancer.server.port=8000
       - traefik.http.routers.backend.tls.certresolver=letsencrypt
       - traefik.http.routers.backend.tls=true
