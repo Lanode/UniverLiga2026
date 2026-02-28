@@ -9,10 +9,46 @@ from . import schemas
 from .config import settings
 from .database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
-from .models.user import User
 from .utils import verify_password
 
-from .routers.auth import get_user_by_username
+from sqlalchemy import select
+from typing import List, Optional
+
+from .models.user import User
+from .utils import get_password_hash
+
+
+# Auth-specific CRUD operations
+async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
+    """Get a user by email."""
+    result = await db.execute(
+        select(User).where(User.email == email)
+    )
+    return result.scalar_one_or_none()
+
+
+async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User]:
+    """Get a user by username."""
+    result = await db.execute(
+        select(User).where(User.username == username)
+    )
+    return result.scalar_one_or_none()
+
+
+async def create_user(db: AsyncSession, user: schemas.UserCreate) -> User:
+    """Create a new user."""
+    hashed_password = get_password_hash(user.password)
+    db_user = User(
+        email=user.email,
+        username=user.username,
+        full_name=user.full_name,
+        hashed_password=hashed_password
+    )
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
+    return db_user
+
 
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")

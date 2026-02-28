@@ -2,8 +2,6 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from typing import List, Optional
 
 from .. import schemas
 from ..auth import (
@@ -13,40 +11,6 @@ from ..auth import (
 )
 from ..config import settings
 from ..database import get_db
-from ..models.user import User
-from ..utils import get_password_hash
-
-# Auth-specific CRUD operations
-async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
-    """Get a user by email."""
-    result = await db.execute(
-        select(User).where(User.email == email)
-    )
-    return result.scalar_one_or_none()
-
-
-async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User]:
-    """Get a user by username."""
-    result = await db.execute(
-        select(User).where(User.username == username)
-    )
-    return result.scalar_one_or_none()
-
-
-async def create_user(db: AsyncSession, user: schemas.UserCreate) -> User:
-    """Create a new user."""
-    hashed_password = get_password_hash(user.password)
-    db_user = User(
-        email=user.email,
-        username=user.username,
-        full_name=user.full_name,
-        hashed_password=hashed_password
-    )
-    db.add(db_user)
-    await db.commit()
-    await db.refresh(db_user)
-    return db_user
-
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
 
