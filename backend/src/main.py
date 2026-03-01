@@ -15,7 +15,7 @@ app = FastAPI(
     title=settings.APP_NAME,
     description="UniverLiga Backend API with JWT Authentication",
     version="2.0.0",
-    root_path="/api/v1" ,
+    root_path=settings.BASE_PATH,
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -60,7 +60,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-api_router = APIRouter(prefix=settings.BASE_PATH)
+api_router = APIRouter()
 
 # Подключаем модули внутрь общего роутера
 api_router.include_router(auth.router)
