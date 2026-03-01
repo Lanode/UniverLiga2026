@@ -14,9 +14,9 @@ from .models import User, Feedback, FeedbackSubcategory, FeedbackResponse, Quast
 app = FastAPI(
     title=settings.APP_NAME,
     description="UniverLiga Backend API with JWT Authentication",
-    version="1.0.0",
-    docs_url="/api/v1/docs",
-    redoc_url="/api/v1/redoc"
+    version="2.0.0",
+    docs_url="/api/v2/docs",
+    redoc_url="/api/v2/redoc"
 )
 
 # Async function to create database tables

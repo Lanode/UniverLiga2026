@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "UniverLiga Backend"
     DEBUG: bool = True
 
-    BASE_PATH: str = "/api/v1"
+    BASE_PATH: str = "/api/v2"
     
     @property
     def ALLOWED_ORIGINS(self) -> List[str]:
