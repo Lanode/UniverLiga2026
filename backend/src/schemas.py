@@ -1,7 +1,7 @@
 from symtable import Class
 
 from pydantic import BaseModel, EmailStr, ConfigDict
-from typing import Optional, List
+from typing import Optional, List, TypedDict
 from datetime import datetime
 from enum import Enum
 
@@ -73,7 +73,7 @@ class FeedbackType(str, Enum):
 class FeedbackBase(BaseModel):
     feedback_type: FeedbackType
     comment: str
-    subcategories: list
+    subcategories: list['FeedbackSubcategory']
 
 
 class FeedbackCreate(FeedbackBase):
@@ -129,7 +129,6 @@ class FeedbackSubcategoryInDB(FeedbackSubcategoryBase):
 class FeedbackSubcategory(FeedbackSubcategoryInDB):
     pass
 
-
 # FeedbackResponse Schemas
 class FeedbackResponseBase(BaseModel):
     response_text: str
@@ -177,3 +176,15 @@ class Task(BaseModel):
 class TaskLink(BaseModel):
     task_id: int
     user_id: int
+
+#ОПРОСНИК
+
+class Answers_Quastionare(BaseModel):
+    question_id: int
+    answer: str
+
+class Quastionare(BaseModel):
+    quastionare_id: int
+    answers: List[
+        Answers_Quastionare
+    ]

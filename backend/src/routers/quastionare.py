@@ -32,3 +32,10 @@ async def get_all_questions(db: AsyncSession, quastionare_id: int):
         select(Question).where(Question.quastionare_id == quastionare_id)
     )
     return result.scalars().all()
+
+@router.post("/send")
+async def send_answer_for_quastionare(
+        answer: schemas.Quastionare,
+        current_user: schemas.User = Depends(get_current_active_user),
+):
+    pass

@@ -7,12 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from ..models import Feedback
 from ..database import get_db
-
+from ..schemas import FeedbackResponse
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 
 @router.post("/") #
 async def create_feedback(
+        feedback: schemas.Feedback,
         current_user: schemas.User = Depends(get_current_active_user),
         db: AsyncSession = Depends(get_db)
 ):
