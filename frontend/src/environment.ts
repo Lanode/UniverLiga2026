@@ -1,1 +1,1 @@
-export const server = 'https://univerliga2026.flaystw.ru/api/v1/';
+export const server = 'https://univerliga2026.flaystw.ru/api/v1';

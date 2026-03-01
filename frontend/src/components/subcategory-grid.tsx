@@ -23,6 +23,7 @@ export function SubcategoryGrid({
 
         return (
           <button
+            type="button"
             key={subcategory.id}
             onClick={() => onToggleSubcategory(subcategory.id)}
             className="subcategory-card"
@@ -33,10 +34,10 @@ export function SubcategoryGrid({
           >
             <img
               src={subcategory.icon}
-              alt={subcategory.label}
+              alt={subcategory.text}
               className="subcategory-icon"
             />
-            <span className="subcategory-label">{subcategory.label}</span>
+            <span className="subcategory-label">{subcategory.text}</span>
           </button>
         );
       })}

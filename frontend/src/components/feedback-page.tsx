@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { EmotionSelector } from "@/components/emotion-selector";
 import { SubcategoryGrid } from "@/components/subcategory-grid";
 import {
-  EMOTION_SUBCATEGORIES,
   type EmotionType,
 } from "@/constants/feedback-data";
 import "./feedback-page.css";
+import { server } from "@/environment";
+
+let EMOTION_SUBCATEGORIES = [];
 
 export function FeedbackPage() {
   const { id, personId } = useParams<{ id: string; personId: string }>();
@@ -26,6 +28,24 @@ export function FeedbackPage() {
   const [comment, setComment] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    // GET /feedback/
+    async function getFeedback() {
+      const response = await fetch(
+        server + '/feedback/',
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem('token_type') + ' ' + localStorage.getItem('access_token')
+          },
+        }
+      );
+      if (!response.ok) throw new Error('Network error');
+      EMOTION_SUBCATEGORIES = await response.json();   // → массив объектов из примера
+    }
+    getFeedback();
+  }, []);
 
   const handleClose = () => {
     navigate(`/task/${id}/users`);
@@ -67,20 +87,36 @@ export function FeedbackPage() {
     setIsSubmitting(true);
 
     try {
-      // Prepare feedback data
-      const feedbackData = {
-        personId,
-        taskId: id,
-        emotion: selectedEmotion,
-        subcategories: Array.from(selectedSubcategories),
+      // Prepare feedback data matching API schema
+      const payload = {
+        feedback_type: selectedEmotion, // e.g. "negative"
         comment,
-        isAnonymous,
+        subcategories: Array.from(selectedSubcategories).map((sub) => ({
+          text: sub,
+          feedback_type_relation: selectedEmotion,
+          id: 0,
+          created_at: new Date().toISOString(),
+        })),
+        id: 0,
+        user_id: isAnonymous ? null : personId,
+        created_at: new Date().toISOString(), 
       };
 
-      // TODO: Send to API
-      console.log("Submitting feedback:", feedbackData);
+      // Send to API with fetch
+      const response = await fetch(server + "/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": localStorage.getItem('token_type') + ' ' + localStorage.getItem('access_token')
+        },
+        body: JSON.stringify(payload),
+      });
 
-      // For now, navigate to success page
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      console.log("Submitting feedback:", payload);
       navigate(`/task/${id}/feedback/${personId}/success`);
     } catch (error) {
       console.error("Error submitting feedback:", error);
@@ -90,9 +126,7 @@ export function FeedbackPage() {
     }
   };
 
-  const currentSubcategories = selectedEmotion
-    ? EMOTION_SUBCATEGORIES[selectedEmotion]
-    : [];
+  const currentSubcategories = EMOTION_SUBCATEGORIES.filter(i => i.feedback_type_relation === selectedEmotion);
 
   return (
     <div className="crm-layout">

@@ -33,6 +33,7 @@ export function EmotionSelector({
 
           return (
             <button
+              type="button"
               key={emotion}
               onClick={() => onSelectEmotion(emotion)}
               className={`emotion-button ${isSelected ? "emotion-button-selected" : ""}`}
