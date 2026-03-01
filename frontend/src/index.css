@@ -226,10 +226,69 @@
   }
 
   .feedback-submit-btn {
-    @apply px-6 bg-[#FF383C] hover:bg-[#FF383C]/90 text-white;
+    @apply px-6 bg-[#589CFF] hover:bg-[#589CFF]/90 text-white;
   }
 
   .feedback-cancel-btn-form {
     @apply px-6;
+  }
+
+  /* Color dot styles */
+  .color-dot {
+    @apply w-3 h-3 rounded-full mr-2 flex-shrink-0;
+  }
+
+  .color-dot-positive {
+    @apply bg-green-500;
+  }
+
+  .color-dot-negative {
+    @apply bg-red-500;
+  }
+
+  .color-dot-neutral {
+    @apply bg-gray-500;
+  }
+
+  .color-dot-suggestion {
+    @apply bg-blue-500;
+  }
+
+  /* Custom select item with color dot */
+  .select-item-with-dot {
+    @apply flex items-center py-2;
+  }
+
+  .select-item-content {
+    @apply flex items-center;
+  }
+
+  /* Feedback success page styles */
+  .feedback-success-bg {
+    @apply absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10;
+  }
+
+  .feedback-success-dialog {
+    @apply w-[480px] p-8 border border-[#E5E5E5] rounded-lg shadow-lg bg-white;
+  }
+
+  .feedback-success-title {
+    @apply text-[20px] font-semibold leading-[1.2] text-[#0A0A0A] mb-4;
+  }
+
+  .feedback-success-description {
+    @apply text-[14px] leading-[1.42857] text-[#737373];
+  }
+
+  .feedback-success-footer {
+    @apply flex justify-end gap-2 mt-6 pt-6 border-t border-[#E5E5E5];
+  }
+
+  .feedback-success-return-btn {
+    @apply px-6 py-2 h-auto border border-[#D4D4D4] bg-white hover:bg-gray-50 text-[#0A0A0A] text-[14px] font-medium leading-[1.42857] rounded-lg shadow-xs;
+  }
+
+  .feedback-success-finish-btn {
+    @apply px-6 py-2 h-auto bg-[#171717] hover:bg-[#0A0A0A] text-white text-[14px] font-medium leading-[1.42857] rounded-lg;
   }
 }

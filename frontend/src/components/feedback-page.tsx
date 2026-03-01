@@ -12,10 +12,37 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+// Типы отзывов с цветами
+const FEEDBACK_TYPES = [
+  { value: "positive", label: "Положительный", color: "#10B981" }, // зеленый
+  { value: "negative", label: "Отрицательный", color: "#EF4444" }, // красный
+  { value: "neutral", label: "Нейтральный", color: "#6B7280" }, // серый
+  { value: "suggestion", label: "Предложение", color: "#3B82F6" }, // синий
+];
+
+// Подкатегории
+const SUBCATEGORIES = [
+  { value: "communication", label: "Коммуникация" },
+  { value: "quality", label: "Качество работы" },
+  { value: "deadlines", label: "Соблюдение сроков" },
+  { value: "teamwork", label: "Работа в команде" },
+  { value: "professionalism", label: "Профессионализм" },
+];
+
+// Компонент цветной точки
+function ColorDot({ color }: { color: string }) {
+  return (
+    <div 
+      className="w-3 h-3 rounded-full mr-2 flex-shrink-0"
+      style={{ backgroundColor: color }}
+    />
+  );
+}
+
 export function FeedbackPage() {
   const { id, personId } = useParams<{ id: string; personId: string }>();
   const navigate = useNavigate();
-  console.log(personId)
+
   const handleClose = () => {
     navigate(`/task/${id}/users`);
   };
@@ -28,7 +55,8 @@ export function FeedbackPage() {
     e.preventDefault();
     // Здесь будет логика отправки формы
     console.log("Форма отправлена");
-    navigate(`/task/${id}/users`);
+    // Перенаправление на страницу успешной отправки
+    navigate(`/task/${id}/feedback/${personId}/success`);
   };
 
   return (
@@ -53,7 +81,7 @@ export function FeedbackPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            {/* Feedback Type Select */}
+            {/* Feedback Type Select with colored dots */}
             <div className="space-y-2">
               <Label htmlFor="feedback-type" className="text-sm font-medium">
                 Тип отзыва
@@ -62,11 +90,19 @@ export function FeedbackPage() {
                 <SelectTrigger id="feedback-type" className="w-full">
                   <SelectValue placeholder="Выберете из списка" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="positive">Положительный</SelectItem>
-                  <SelectItem value="negative">Отрицательный</SelectItem>
-                  <SelectItem value="neutral">Нейтральный</SelectItem>
-                  <SelectItem value="suggestion">Предложение</SelectItem>
+                <SelectContent className="max-h-60">
+                  {FEEDBACK_TYPES.map((type) => (
+                    <SelectItem 
+                      key={type.value} 
+                      value={type.value}
+                      className="flex items-center py-2"
+                    >
+                      <div className="flex items-center">
+                        <ColorDot color={type.color} />
+                        <span>{type.label}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -80,12 +116,16 @@ export function FeedbackPage() {
                 <SelectTrigger id="subcategory" className="w-full">
                   <SelectValue placeholder="Выберете из списка" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="communication">Коммуникация</SelectItem>
-                  <SelectItem value="quality">Качество работы</SelectItem>
-                  <SelectItem value="deadlines">Соблюдение сроков</SelectItem>
-                  <SelectItem value="teamwork">Работа в команде</SelectItem>
-                  <SelectItem value="professionalism">Профессионализм</SelectItem>
+                <SelectContent className="max-h-60">
+                  {SUBCATEGORIES.map((category) => (
+                    <SelectItem 
+                      key={category.value} 
+                      value={category.value}
+                      className="py-2"
+                    >
+                      {category.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -114,7 +154,7 @@ export function FeedbackPage() {
               </Button>
               <Button
                 type="submit"
-                className="px-6 bg-[#FF383C] hover:bg-[#FF383C]/90"
+                className="px-6 bg-[#589CFF] hover:bg-[#589CFF]/90 text-white"
               >
                 Отправить
               </Button>
