@@ -1,7 +1,7 @@
-import { ComponentExample } from "@/components/component-example";
+import { LoginPage } from "@/components/login-page";
 
 export function App() {
-return <ComponentExample />;
+  return <LoginPage />;
 }
 
 export default App;
