@@ -158,8 +158,8 @@ export function FeedbackSystemDialog() {
   const [surveysExportFormat, setSurveysExportFormat] = useState("csv");
   const [surveys, setSurveys] = useState<Survey[]>(INITIAL_SURVEYS);
   const [selectedSurveys, setSelectedSurveys] = useState<Set<string>>(new Set());
-  const [positiveQualities, setPositiveQualities] = useState<QualityAttribute[]>(POSITIVE_QUALITIES);
-  const [negativeQualities, setNegativeQualities] = useState<QualityAttribute[]>(NEGATIVE_QUALITIES);
+  const [positiveQualities] = useState<QualityAttribute[]>(POSITIVE_QUALITIES);
+  const [negativeQualities] = useState<QualityAttribute[]>(NEGATIVE_QUALITIES);
 
   const handleGenerateReport = () => {
     console.log({ department: selectedDepartment, employee: selectedEmployee, startDate, endDate });
