@@ -6,6 +6,7 @@ import "./index.css"
 import { LoginPage } from "./components/login-page"
 import { TaskPage } from "./components/task-page"
 import { SelectPersonPage } from "./components/select-person-page"
+import { FeedbackPage } from "./components/feedback-page"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<LoginPage />} />
         <Route path="/task/:id" element={<TaskPage />} />
         <Route path="/task/:id/users" element={<SelectPersonPage />} />
+        <Route path="/task/:id/feedback/:personId" element={<FeedbackPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

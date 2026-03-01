@@ -203,4 +203,33 @@
   .person-avatar {
     @apply flex items-center justify-center w-10 h-10 rounded-full bg-muted shrink-0;
   }
+
+  /* Feedback form specific styles */
+  .feedback-form-field {
+    @apply space-y-2;
+  }
+
+  .feedback-form-label {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .feedback-form-select {
+    @apply w-full border border-[#D4D4D4] rounded-lg shadow-sm;
+  }
+
+  .feedback-form-textarea {
+    @apply min-h-[100px] resize-y border border-[#D4D4D4] rounded-lg shadow-sm;
+  }
+
+  .feedback-form-footer {
+    @apply flex justify-end gap-3 pt-6 border-t border-[#E5E5E5];
+  }
+
+  .feedback-submit-btn {
+    @apply px-6 bg-[#FF383C] hover:bg-[#FF383C]/90 text-white;
+  }
+
+  .feedback-cancel-btn-form {
+    @apply px-6;
+  }
 }
