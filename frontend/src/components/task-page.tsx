@@ -1,9 +1,15 @@
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function TaskPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  function feedback() {
+    navigate("./users");
+  }
 
   return (
     <div className="flex min-h-screen bg-white">
@@ -46,6 +52,7 @@ export function TaskPage() {
           <Button
             className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg"
             size="lg"
+            onClick={feedback}
           >
             <Plus size={16} />
             Поделиться опытом взаимодействия
