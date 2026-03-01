@@ -20,95 +20,86 @@ export function FeedbackPage() {
   const { id, personId } = useParams<{ id: string; personId: string }>();
   const navigate = useNavigate();
 
-  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(
-    null
-  );
-  const [selectedSubcategories, setSelectedSubcategories] = useState<
-    Set<string>
-  >(new Set());
+  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(null);
+  const [selectedSubcategories, setSelectedSubcategories] = useState<Set<string>>(new Set());
   const [comment, setComment] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /* -------------------------------------------------
+   * Получаем список подкатегорий (эмоций) с сервера
+   * ------------------------------------------------- */
   useEffect(() => {
-    // GET /feedback/
     async function getFeedback() {
-      const response = await fetch(
-        server + '/feedback/',
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": localStorage.getItem('token_type') + ' ' + localStorage.getItem('access_token')
-          },
-        }
-      );
-      if (!response.ok) throw new Error('Network error');
-      EMOTION_SUBCATEGORIES = await response.json();   // → массив объектов из примера
+      const response = await fetch(`${server}/feedback/`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            `${localStorage.getItem("token_type")} ${localStorage.getItem("access_token")}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Network error");
+      EMOTION_SUBCATEGORIES = await response.json(); // массив Subcategory
     }
+
     getFeedback();
   }, []);
 
-  const handleClose = () => {
-    navigate(`/task/${id}/users`);
-  };
-
-  const handleCancel = () => {
-    navigate(`/task/${id}/users`);
-  };
+  const handleClose = () => navigate(`/task/${id}/users`);
+  const handleCancel = () => navigate(`/task/${id}/users`);
 
   const handleEmotionSelect = (emotion: EmotionType) => {
     setSelectedEmotion(emotion);
-    // Clear subcategories when emotion changes
-    setSelectedSubcategories(new Set());
+    setSelectedSubcategories(new Set()); // сброс подкатегорий
   };
 
-  const handleToggleSubcategory = (id: string) => {
-    const newSelected = new Set(selectedSubcategories);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
-    } else {
-      newSelected.add(id);
-    }
-    setSelectedSubcategories(newSelected);
+  const handleToggleSubcategory = (subId: string) => {
+    const newSet = new Set(selectedSubcategories);
+    newSet.has(subId) ? newSet.delete(subId) : newSet.add(subId);
+    setSelectedSubcategories(newSet);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedEmotion) {
-      // alert("Пожалуйста, выберите тип отзыва");
-      return;
-    }
-
-    if (selectedSubcategories.size === 0) {
-      // alert("Пожалуйста, выберите хотя бы одну подкатегорию");
-      return;
-    }
+    if (!selectedEmotion) return;
+    if (selectedSubcategories.size === 0) return;
 
     setIsSubmitting(true);
 
     try {
-      // Prepare feedback data matching API schema
-      const payload = {
-        feedback_type: selectedEmotion, // e.g. "negative"
-        comment,
-        subcategories: Array.from(selectedSubcategories).map((sub) => ({
-          text: sub,
+      /* -------------------------------------------------
+       * Формируем массив subcategories в соответствии с API
+       * ------------------------------------------------- */
+      const subcategoriesPayload = Array.from(selectedSubcategories).map(
+        (subId) => ({
+          text: subId.toString(), // <-- строка, а не число
           feedback_type_relation: selectedEmotion,
           id: 0,
           created_at: new Date().toISOString(),
-        })),
+        })
+      );
+
+      /* -------------------------------------------------
+       * Полный payload, включая обязательные поля
+       * ------------------------------------------------- */
+      const payload = {
+        feedback_type: selectedEmotion,
+        comment,
+        subcategories: subcategoriesPayload,
         id: 0,
-        user_id: isAnonymous ? null : personId,
-        created_at: new Date().toISOString(), 
+        user_id: isAnonymous ? null : personId, // получатель (может быть null)
+        user_to_id: personId,                    // <-- обязательное поле
+        created_at: new Date().toISOString(),
       };
 
-      // Send to API with fetch
-      const response = await fetch(server + "/feedback", {
+      const response = await fetch(`${server}/feedback/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": localStorage.getItem('token_type') + ' ' + localStorage.getItem('access_token')
+          Authorization:
+            `${localStorage.getItem("token_type")} ${localStorage.getItem("access_token")}`,
         },
         body: JSON.stringify(payload),
       });
@@ -117,7 +108,6 @@ export function FeedbackPage() {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      console.log("Submitting feedback:", payload);
       navigate(`/task/${id}/feedback/${personId}/success`);
     } catch (error) {
       console.error("Error submitting feedback:", error);
@@ -127,7 +117,9 @@ export function FeedbackPage() {
     }
   };
 
-  const currentSubcategories = EMOTION_SUBCATEGORIES.filter(i => i.feedback_type_relation === selectedEmotion);
+  const currentSubcategories = EMOTION_SUBCATEGORIES.filter(
+    (i) => i.feedback_type_relation === selectedEmotion
+  );
 
   return (
     <div className="crm-layout">
@@ -135,7 +127,7 @@ export function FeedbackPage() {
 
       <main className="crm-main">
         <div className="feedback-dialog">
-          {/* Dialog Header */}
+          {/* Header */}
           <div className="feedback-dialog-header">
             <h2 className="feedback-dialog-title">Введите ваш отзыв</h2>
             <button
@@ -147,24 +139,22 @@ export function FeedbackPage() {
             </button>
           </div>
 
-          {/* Form Content */}
+          {/* Form */}
           <form onSubmit={handleSubmit} className="feedback-form">
-            {/* Emotion Type Label */}
+            {/* Тип отзыва */}
             <div className="form-field">
               <Label className="form-label">Тип отзыва</Label>
             </div>
 
-            {/* Emotion Selector */}
             <EmotionSelector
               selectedEmotion={selectedEmotion}
               onSelectEmotion={handleEmotionSelect}
             />
 
-            {/* Subcategories Section */}
+            {/* Подкатегории */}
             {selectedEmotion && (
               <div className="form-field">
                 <Label className="form-label">Подкатегория</Label>
-
                 <SubcategoryGrid
                   subcategories={currentSubcategories}
                   selectedSubcategories={selectedSubcategories}
@@ -174,7 +164,7 @@ export function FeedbackPage() {
               </div>
             )}
 
-            {/* Comment Textarea */}
+            {/* Комментарий */}
             <div className="form-field">
               <Label htmlFor="comment" className="form-label">
                 Комментарий
@@ -188,7 +178,7 @@ export function FeedbackPage() {
               />
             </div>
 
-            {/* Anonymous Checkbox */}
+            {/* Анонимность */}
             <div className="anonymous-checkbox-wrapper">
               <input
                 type="checkbox"
@@ -202,7 +192,7 @@ export function FeedbackPage() {
               </label>
             </div>
 
-            {/* Footer Buttons */}
+            {/* Кнопки */}
             <div className="feedback-footer">
               <Button
                 type="button"
