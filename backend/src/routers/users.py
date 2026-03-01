@@ -9,88 +9,6 @@ from ..database import get_db
 from ..models.user import User, Link
 from ..utils import get_password_hash
 
-# User CRUD operations
-async def get_user(db: AsyncSession, user_id: int) -> Optional[User]:
-    """Get a user by ID."""
-    result = await db.execute(
-        select(User).where(User.id == user_id)
-    )
-    return result.scalar_one_or_none()
-
-
-async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
-    """Get a user by email."""
-    result = await db.execute(
-        select(User).where(User.email == email)
-    )
-    return result.scalar_one_or_none()
-
-
-async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User]:
-    """Get a user by username."""
-    result = await db.execute(
-        select(User).where(User.username == username)
-    )
-    return result.scalar_one_or_none()
-
-
-async def get_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[User]:
-    """Get a list of users with pagination."""
-    result = await db.execute(
-        select(User).offset(skip).limit(limit)
-    )
-    return result.scalars().all()
-
-
-async def create_user(db: AsyncSession, user: schemas.UserCreate) -> User:
-    """Create a new user."""
-    hashed_password = get_password_hash(user.password)
-    db_user = User(
-        email=user.email,
-        username=user.username,
-        full_name=user.full_name,
-        hashed_password=hashed_password
-    )
-    db.add(db_user)
-    await db.commit()
-    await db.refresh(db_user)
-    return db_user
-
-
-async def update_user(
-    db: AsyncSession, 
-    user_id: int, 
-    user_update: schemas.UserUpdate
-) -> Optional[User]:
-    """Update a user."""
-    db_user = await get_user(db, user_id)
-    if not db_user:
-        return None
-    
-    update_data = user_update.model_dump(exclude_unset=True)
-    
-    # Handle password update separately
-    if "password" in update_data:
-        update_data["hashed_password"] = get_password_hash(update_data.pop("password"))
-    
-    for field, value in update_data.items():
-        setattr(db_user, field, value)
-    
-    await db.commit()
-    await db.refresh(db_user)
-    return db_user
-
-
-async def delete_user(db: AsyncSession, user_id: int) -> bool:
-    """Delete a user."""
-    db_user = await get_user(db, user_id)
-    if not db_user:
-        return False
-    
-    await db.delete(db_user)
-    await db.commit()
-    return True
-
 router = APIRouter(prefix="/users", tags=["users"])
 
 
@@ -102,7 +20,10 @@ async def read_users(
     current_user: schemas.User = Depends(get_current_superuser)
 ):
     """Get all users (superuser only)."""
-    users = await get_users(db, skip=skip, limit=limit)
+    result = await db.execute(
+        select(User).offset(skip).limit(limit)
+    )
+    users = result.scalars().all()
     return users
 
 
@@ -120,7 +41,11 @@ async def read_user(
             detail="Not enough permissions"
         )
     
-    db_user = await get_user(db, user_id=user_id)
+    result = await db.execute(
+        select(User).where(User.id == user_id)
+    )
+    db_user = result.scalar_one_or_none()
+    
     if db_user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -144,12 +69,29 @@ async def update_user(
             detail="Not enough permissions"
         )
     
-    db_user = await update_user(db, user_id=user_id, user_update=user_update)
+    # Get user from database
+    result = await db.execute(
+        select(User).where(User.id == user_id)
+    )
+    db_user = result.scalar_one_or_none()
+    
     if db_user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
+    
+    update_data = user_update.model_dump(exclude_unset=True)
+    
+    # Handle password update separately
+    if "password" in update_data:
+        update_data["hashed_password"] = get_password_hash(update_data.pop("password"))
+    
+    for field, value in update_data.items():
+        setattr(db_user, field, value)
+    
+    await db.commit()
+    await db.refresh(db_user)
     return db_user
 
 
@@ -160,13 +102,21 @@ async def delete_user(
     current_user: schemas.User = Depends(get_current_superuser)
 ):
     """Delete a user (superuser only)."""
-    success = await delete_user(db, user_id=user_id)
-    if not success:
+    result = await db.execute(
+        select(User).where(User.id == user_id)
+    )
+    db_user = result.scalar_one_or_none()
+    
+    if db_user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
+    
+    await db.delete(db_user)
+    await db.commit()
     return {"message": "User deleted successfully"}
+
 
 @router.post("/link")
 async def add_link(
@@ -188,7 +138,9 @@ async def add_link(
     await db.refresh(link)
     return link
 
+
 task_router = APIRouter(prefix="/task", tags=["tasks"])
+
 
 @task_router.get("/{task_id}/users", response_model=List[schemas.User])
 async def read_task_users(
@@ -199,5 +151,8 @@ async def read_task_users(
     current_user: schemas.User = Depends(get_current_superuser)
 ):
     """Get all users (superuser only)."""
-    users = await get_users(db, skip=skip, limit=limit)
+    result = await db.execute(
+        select(User).offset(skip).limit(limit)
+    )
+    users = result.scalars().all()
     return users
