@@ -7,11 +7,56 @@ export const EMOTIONS = {
 
 export type EmotionType = typeof EMOTIONS[keyof typeof EMOTIONS];
 
-// Emoji URLs for emotions
+// Import emoji assets
+import positiveEmoji from "@/assets/emojis/positive.svg";
+import neutralEmoji from "@/assets/emojis/neutral.svg";
+import negativeEmoji from "@/assets/emojis/negative.svg";
+
+// Emoji ID to asset path mapping
+export interface EmojiMapping {
+  id: number;
+  emotion: EmotionType;
+  path: string;
+}
+
+export const EMOJI_MAPPING: EmojiMapping[] = [
+  {
+    id: 1,
+    emotion: EMOTIONS.POSITIVE,
+    path: positiveEmoji,
+  },
+  {
+    id: 2,
+    emotion: EMOTIONS.NEUTRAL,
+    path: neutralEmoji,
+  },
+  {
+    id: 3,
+    emotion: EMOTIONS.NEGATIVE,
+    path: negativeEmoji,
+  },
+];
+
+// Helper function to get emoji path by ID
+export const getEmojiPathById = (id: number): string | undefined => {
+  return EMOJI_MAPPING.find(emoji => emoji.id === id)?.path;
+};
+
+// Helper function to get emoji path by emotion type
+export const getEmojiPathByEmotion = (emotion: EmotionType): string | undefined => {
+  return EMOJI_MAPPING.find(emoji => emoji.emotion === emotion)?.path;
+};
+
+// Helper function to get emotion type by emoji ID
+export const getEmotionById = (id: number): EmotionType | undefined => {
+  return EMOJI_MAPPING.find(emoji => emoji.id === id)?.emotion;
+};
+
+// Emoji URLs for emotions (backward compatibility)
 export const EMOTION_EMOJIS = {
-  [EMOTIONS.POSITIVE]: "https://api.builder.io/api/v1/image/assets/TEMP/35912a8d9aa4064b57a8b21eb92593c2123cd8ab?width=114",
-  [EMOTIONS.NEUTRAL]: "https://api.builder.io/api/v1/image/assets/TEMP/fcecd5af10e0a1b95e6662169c7f9dd5da8ae9b3?width=114",
-  [EMOTIONS.NEGATIVE]: "https://api.builder.io/api/v1/image/assets/TEMP/04ac34b81dc502232b1ece1818fe7452a507f18c?width=114",
+  [EMOTIONS.POSITIVE]: positiveEmoji,
+  [EMOTIONS.NEUTRAL]: neutralEmoji,
+  [EMOTIONS.NEGATIVE]: negativeEmoji,
 } as const;
 
 // Emotion colors
