@@ -73,6 +73,7 @@ class FeedbackType(str, Enum):
 class FeedbackBase(BaseModel):
     feedback_type: FeedbackType
     comment: str
+    subcategories: list
 
 
 class FeedbackCreate(FeedbackBase):
@@ -89,7 +90,6 @@ class FeedbackInDB(FeedbackBase):
     id: int
     user_id: int
     created_at: datetime
-    updated_at: Optional[datetime] = None
     
     model_config = ConfigDict(from_attributes=True)
 

@@ -48,9 +48,6 @@ class Feedback(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now()
     )
-    updated_at: Mapped[Optional[datetime]] = mapped_column(
-        DateTime, onupdate=func.now(), nullable=True
-    )
     
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="feedbacks")

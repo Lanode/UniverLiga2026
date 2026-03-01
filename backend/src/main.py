@@ -7,9 +7,6 @@ from .config import settings
 from .database import engine, Base
 from .routers import auth, users, feedback, quastionare, report,task
 
-# Import models to ensure SQLAlchemy discovers them
-from .models import User, Feedback, FeedbackSubcategory, FeedbackResponse, Quastionare, Question, Answer
-
 # Create FastAPI app
 app = FastAPI(
     title=settings.APP_NAME,

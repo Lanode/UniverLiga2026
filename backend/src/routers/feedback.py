@@ -24,7 +24,8 @@ async def read_feedback(
         current_user: schemas.User = Depends(get_current_active_user),
         db: AsyncSession = Depends(get_db)
 ):
-
     result = await db.execute(select(Feedback).where(Feedback.id == item_id))
-    return {"result": result.scalar_one_or_none()}
+    res = result.scalar_one()
+    print(res)
+    return res
 
