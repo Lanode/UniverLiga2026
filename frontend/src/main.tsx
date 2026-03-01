@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import "./index.css"
 import { LoginPage } from "./components/login-page"
 import { TaskPage } from "./components/task-page"
+import { SelectPerson } from "./components/select-person-page"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -12,6 +13,7 @@ createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/task/:id" element={<TaskPage />} />
+        <Route path="/task/:id/users" element={<TaskPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
