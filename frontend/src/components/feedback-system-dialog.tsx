@@ -129,8 +129,8 @@ export function FeedbackSystemDialog() {
           {/* ─── Statistics Tab ─── */}
           {activeTab === "statistics" && (
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-5 items-end">
-                <div className="md:col-span-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                <div className="max-w-xs">
                   <Label className="text-sm font-medium mb-2 block">Отдел</Label>
                   <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
                     <SelectTrigger>
@@ -142,7 +142,7 @@ export function FeedbackSystemDialog() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="md:col-span-1">
+                <div className="max-w-xs">
                   <Label className="text-sm font-medium mb-2 block">Сотрудники</Label>
                   <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
                     <SelectTrigger>
@@ -154,7 +154,7 @@ export function FeedbackSystemDialog() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
+                <div className="max-w-xs">
                   <Label className="text-sm font-medium mb-2 block">Начало</Label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#525252] w-4 h-4 pointer-events-none" />
@@ -167,7 +167,7 @@ export function FeedbackSystemDialog() {
                     />
                   </div>
                 </div>
-                <div>
+                <div className="max-w-xs">
                   <Label className="text-sm font-medium mb-2 block">Конец</Label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#525252] w-4 h-4 pointer-events-none" />
@@ -180,7 +180,7 @@ export function FeedbackSystemDialog() {
                     />
                   </div>
                 </div>
-                <div>
+                <div className="max-w-xs">
                   <Button
                     onClick={handleGenerateReport}
                     className="w-full bg-[var(--general-accent)] hover:bg-[#4a7fd7] text-white"
