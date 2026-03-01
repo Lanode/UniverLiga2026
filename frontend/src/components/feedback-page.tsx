@@ -55,12 +55,12 @@ export function FeedbackPage() {
     e.preventDefault();
 
     if (!selectedEmotion) {
-      alert("Пожалуйста, выберите тип отзыва");
+      // alert("Пожалуйста, выберите тип отзыва");
       return;
     }
 
     if (selectedSubcategories.size === 0) {
-      alert("Пожалуйста, выберите хотя бы одну подкатегорию");
+      // alert("Пожалуйста, выберите хотя бы одну подкатегорию");
       return;
     }
 
