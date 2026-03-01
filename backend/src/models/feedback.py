@@ -45,12 +45,15 @@ class Feedback(Base):
     )
     comment: Mapped[str] = mapped_column(Text, nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    user_to_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    allow_feedback: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now()
     )
     
     # Relationships
-    user: Mapped["User"] = relationship("User", back_populates="feedbacks")
+    user: Mapped["User"] = relationship("User", foreign_keys=[user_id])
+    user_to: Mapped["User"] = relationship("User", foreign_keys=[user_to_id])
     subcategories: Mapped[List["FeedbackSubcategory"]] = relationship(
         "FeedbackSubcategory",
         secondary=feedback_subcategory_association,
@@ -75,6 +78,7 @@ class FeedbackSubcategory(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now()
     )
+    department: Mapped[str] = mapped_column(String(255), nullable=False)
     
     # Relationships
     feedbacks: Mapped[List["Feedback"]] = relationship(

@@ -27,14 +27,8 @@ class User(Base):
     updated_at: Mapped[Optional[datetime]] = mapped_column(
         onupdate=func.now(), nullable=True
     )
-    
-    # Relationships with feedback models
-    feedbacks: Mapped[List["Feedback"]] = relationship(
-        "Feedback", back_populates="user", cascade="all, delete-orphan"
-    )
-    feedback_responses: Mapped[List["FeedbackResponse"]] = relationship(
-        "FeedbackResponse", back_populates="responder", cascade="all, delete-orphan"
-    )
+    role: Mapped[str] = mapped_column(String, default='technical', nullable=False,)
+
 
 class Link(Base):
     __tablename__ = "users_links"

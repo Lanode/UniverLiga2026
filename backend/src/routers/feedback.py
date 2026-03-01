@@ -8,6 +8,7 @@ from sqlalchemy import select
 from ..models import Feedback
 from ..database import get_db
 from ..schemas import FeedbackResponse
+from ..models.feedback import FeedbackSubcategory
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 
@@ -19,6 +20,14 @@ async def create_feedback(
 ):
     return {"status": "created"}
 
+@router.get("/")
+async def get_feedback(
+        current_user: schemas.User = Depends(get_current_active_user),
+        db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(select(FeedbackSubcategory).where(FeedbackSubcategory.department == current_user.role))
+    return result.scalars().all()
+
 @router.get("/{item_id}")
 async def read_feedback(
         item_id: int,
@@ -29,4 +38,3 @@ async def read_feedback(
     res = result.scalar_one()
     print(res)
     return res
-
