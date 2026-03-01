@@ -9,11 +9,12 @@ import { EmotionSelector } from "@/components/emotion-selector";
 import { SubcategoryGrid } from "@/components/subcategory-grid";
 import {
   type EmotionType,
+  type Subcategory,
 } from "@/constants/feedback-data";
 import "./feedback-page.css";
 import { server } from "@/environment";
 
-let EMOTION_SUBCATEGORIES = [];
+let EMOTION_SUBCATEGORIES: Subcategory[] = [];
 
 export function FeedbackPage() {
   const { id, personId } = useParams<{ id: string; personId: string }>();

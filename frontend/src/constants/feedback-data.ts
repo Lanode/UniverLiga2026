@@ -38,5 +38,6 @@ export interface Subcategory {
   id: string;
   text: string;
   icon: string;
+  feedback_type_relation: string;
 }
 
