@@ -118,7 +118,7 @@ export function FeedbackPage() {
   };
 
   const currentSubcategories = EMOTION_SUBCATEGORIES.filter(
-    (i) => i.feedback_type_relation === selectedEmotion
+    (i) => i.feedback_type_relation === selectedEmotion || selectedEmotion === "neutral"
   );
 
   return (
