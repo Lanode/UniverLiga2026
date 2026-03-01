@@ -5,7 +5,7 @@ import asyncio
 
 from .config import settings
 from .database import engine, Base
-from .routers import auth, users, feedback, quastionare, report,task
+from .routers import auth, questionnaire, users, feedback, report,task
 
 # Create FastAPI app
 app = FastAPI(
@@ -63,7 +63,7 @@ api_router = APIRouter()
 api_router.include_router(auth.router)
 api_router.include_router(users.router)
 api_router.include_router(feedback.router)
-api_router.include_router(quastionare.router)
+api_router.include_router(questionnaire.router)
 api_router.include_router(report.router)
 api_router.include_router(task.router)
 
