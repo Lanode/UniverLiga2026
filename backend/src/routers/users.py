@@ -187,3 +187,17 @@ async def add_link(
     await db.commit()
     await db.refresh(link)
     return link
+
+task_router = APIRouter(prefix="/task", tags=["tasks"])
+
+@task_router.get("/{task_id}/users", response_model=List[schemas.User])
+async def read_task_users(
+    task_id: int,
+    skip: int = 0,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db),
+    current_user: schemas.User = Depends(get_current_superuser)
+):
+    """Get all users (superuser only)."""
+    users = await get_users(db, skip=skip, limit=limit)
+    return users
