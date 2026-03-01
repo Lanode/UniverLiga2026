@@ -8,12 +8,11 @@ services:
     container_name: univerliga-backend
     environment:
       - DEBUG=false
-      - DATABASE_URL=sqlite:///./app.db
+      - DATABASE_URL=sqlite:///./data/app.db
       - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-production}
       - ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,http://frontend:80
     volumes:
-      - ./backend/app.db:/app/app.db
-      - ./backend/src:/app/src
+      - ./backend/data:/app/data
     # healthcheck:
     #   test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=2)"]
     #   interval: 30s
@@ -37,7 +36,3 @@ services:
     networks:
       - univerliga-network
     restart: unless-stopped
-
-networks:
-  univerliga-network:
-    driver: bridge

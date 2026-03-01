@@ -5,10 +5,10 @@ from sqlalchemy import Boolean, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
-from .database import Base
+from ..database import Base
 
 if TYPE_CHECKING:
-    from .models.feedback import Feedback, FeedbackResponse
+    from .feedback import Feedback, FeedbackResponse
 
 
 class User(Base):
@@ -28,11 +28,6 @@ class User(Base):
         onupdate=func.now(), nullable=True
     )
     
-    # Relationship with items
-    items: Mapped[List["Item"]] = relationship(
-        "Item", back_populates="owner", cascade="all, delete-orphan"
-    )
-    
     # Relationships with feedback models
     feedbacks: Mapped[List["Feedback"]] = relationship(
         "Feedback", back_populates="user", cascade="all, delete-orphan"
@@ -41,21 +36,9 @@ class User(Base):
         "FeedbackResponse", back_populates="responder", cascade="all, delete-orphan"
     )
 
-
-class Item(Base):
-    __tablename__ = "items"
+class Link(Base):
+    __tablename__ = "users_links"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    title: Mapped[str] = mapped_column(String, index=True, nullable=False)
-    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    completed: Mapped[bool] = mapped_column(Boolean, default=False)
-    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        server_default=func.now()
-    )
-    updated_at: Mapped[Optional[datetime]] = mapped_column(
-        onupdate=func.now(), nullable=True
-    )
-    
-    # Relationship with user
-    owner: Mapped["User"] = relationship("User", back_populates="items")
+    id_parent: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    id_child: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)

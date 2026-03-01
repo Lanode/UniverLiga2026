@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .. import schemas
 from ..auth import get_current_active_user, get_current_superuser
 from ..database import get_db
-from ..models import User
+from ..models.user import User, Link
 from ..utils import get_password_hash
 
 # User CRUD operations
@@ -167,3 +167,23 @@ async def delete_user(
             detail="User not found"
         )
     return {"message": "User deleted successfully"}
+
+@router.post("/link")
+async def add_link(
+        user_link: schemas.UserLink,
+        db: AsyncSession = Depends(get_db),
+        current_user: schemas.User = Depends(get_current_active_user)
+):
+    if user_link.id_parent == user_link.id_child:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    link = Link(
+        id_parent=user_link.id_parent,
+        id_child=user_link.id_child
+    )
+    db.add(link)
+    await db.commit()
+    await db.refresh(link)
+    return link
