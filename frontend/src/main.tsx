@@ -13,7 +13,7 @@ createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/task/:id" element={<TaskPage />} />
-        <Route path="/task/:id/users" element={<SelectPersonPage />} />
+        <Route path="/task/:id/feedback/select-person" element={<SelectPersonPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
