@@ -20,7 +20,7 @@ async def read_task_users(
 ):
     current_user_id = current_user.id
     result_all_task_user = await db.execute(
-        select(TaskLink.task_id).where(TaskLink.user_id == current_user_id)
+        select(TaskLink.task_id).where(TaskLink.user_id == current_user_id and TaskLink.user_id != current_user_id)
     )
     if task_id not in result_all_task_user.scalars().all():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")

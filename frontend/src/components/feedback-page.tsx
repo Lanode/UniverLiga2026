@@ -137,7 +137,7 @@ export function FeedbackPage() {
         <div className="feedback-dialog">
           {/* Dialog Header */}
           <div className="feedback-dialog-header">
-            <h2 className="feedback-dialog-title">Калинина Ирина</h2>
+            <h2 className="feedback-dialog-title">Введите ваш отзыв</h2>
             <button
               onClick={handleClose}
               className="feedback-close-btn"
