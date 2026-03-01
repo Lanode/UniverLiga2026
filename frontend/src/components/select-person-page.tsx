@@ -5,15 +5,22 @@ import { CrmSidebar } from "@/components/crm-sidebar";
 
 interface Person {
   id: number;
-  name: string;
+  email: string;
+  username: string;
+  full_name: string;
+  is_active: boolean;
+  is_superuser: boolean;
+  created_at: string;
+  updated_at: string;
+
   role: string;
   reviewed: boolean;
 }
 
 const PEOPLE: Person[] = [
-  { id: 1, name: "Иванов Иван", role: "Тестировщик", reviewed: true },
-  { id: 2, name: "Калинина Ирина", role: "Разработчик", reviewed: false },
-  { id: 3, name: "Миронов Вячеслав", role: "Разработчик", reviewed: false },
+  { id: 1, full_name: "Иванов Иван", role: "Тестировщик", reviewed: true, email: "test@test.ru", username: "test", is_active: true, is_superuser: true, created_at: "", updated_at: "" },
+  { id: 2, full_name: "Калинина Ирина", role: "Разработчик", reviewed: false, email: "test@test.ru", username: "test", is_active: true, is_superuser: true, created_at: "", updated_at: "" },
+  { id: 3, full_name: "Миронов Вячеслав", role: "Разработчик", reviewed: false, email: "test@test.ru", username: "test", is_active: true, is_superuser: true, created_at: "", updated_at: "" },
 ];
 
 function PersonAvatar() {
@@ -87,7 +94,7 @@ export function SelectPersonPage() {
                   <div className="feedback-person-info">
                     <PersonAvatar />
                     <div className="feedback-person-details">
-                      <span className="feedback-person-name">{person.name}</span>
+                      <span className="feedback-person-name">{person.full_name}</span>
                       <span className="feedback-person-role">{person.role}</span>
                     </div>
                   </div>

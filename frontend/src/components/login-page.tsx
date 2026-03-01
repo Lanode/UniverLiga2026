@@ -1,7 +1,55 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { server } from "@/environment"
+import { useNavigate } from "react-router-dom";
 
 export function LoginPage() {
+// form state
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // send credentials to /auth/login
+  async function loginFetch(e: React.FormEvent) {
+    e.preventDefault();               // prevent page reload
+    if (!username || !password) return;  // safety check
+
+    setLoading(true);
+    try {
+      const resp = await fetch(server + "/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          username: username,
+          password: password,
+        }),
+      });
+
+      // handle response as needed
+      if (!resp.ok) {
+        // example: show an error (replace with your UI logic)
+        console.error("Login failed", await resp.text());
+      } else {
+        const data = await resp.json();
+        localStorage.setItem('access_token', data['access_token']);
+        localStorage.setItem('token_type', data['token_type']);
+        console.log("Login successful");
+        navigate("/task/1", { replace: true });
+        // e.g. redirect, store token, etc.
+      }
+    } catch (err) {
+      console.error("Network error", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const isDisabled = loading || !username || !password;
+
   return (
     <div className="flex min-h-screen bg-white">
       {/* Left Panel - Hidden on mobile */}
@@ -52,11 +100,13 @@ export function LoginPage() {
           </div>
 
           {/* Form */}
-          <form className="flex flex-col gap-6">
+          <form className="flex flex-col gap-6" onSubmit={loginFetch}>
             {/* Login input */}
             <Input
               type="text"
               placeholder="Логин"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="h-9 px-3 py-1.5 text-sm"
             />
 
@@ -64,6 +114,8 @@ export function LoginPage() {
             <Input
               type="password"
               placeholder="Пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="h-9 px-3 py-1.5 text-sm"
             />
 
@@ -71,6 +123,7 @@ export function LoginPage() {
             <Button
               type="submit"
               className="h-9 bg-brand hover:bg-red-700 text-white font-semibold text-sm"
+              disabled={isDisabled}
             >
               Войти
             </Button>
