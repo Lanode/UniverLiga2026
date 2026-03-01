@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { EmotionSelector } from "@/components/emotion-selector";
 import { SubcategoryGrid } from "@/components/subcategory-grid";
 import {
-  EMOTIONS,
   EMOTION_SUBCATEGORIES,
   type EmotionType,
 } from "@/constants/feedback-data";
