@@ -15,7 +15,7 @@ interface Person {
   created_at: string;
   updated_at: string;
   role: string;
-  reviewed: boolean;
+  allow_feedback: boolean;
 }
 
 export function SelectPersonPage() {
@@ -95,8 +95,8 @@ export function SelectPersonPage() {
                       </div>
                     </div>
 
-                    {person.reviewed ? (
-                      <span className="feedback-already-reviewed">
+                    {person.allow_feedback ? (
+                      <span className="feedback-already-allow_feedback">
                         Вы уже оставляли отзыв
                       </span>
                     ) : (
