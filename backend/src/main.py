@@ -5,7 +5,7 @@ import asyncio
 
 from .config import settings
 from .database import engine, Base
-from .routers import auth, users, feedback, quastionare, report
+from .routers import auth, users, feedback, quastionare, report,task
 
 # Import models to ensure SQLAlchemy discovers them
 from .models import User, Feedback, FeedbackSubcategory, FeedbackResponse, Quastionare, Question, Answer
@@ -67,6 +67,7 @@ api_router.include_router(users.router)
 api_router.include_router(feedback.router)
 api_router.include_router(quastionare.router)
 api_router.include_router(report.router)
+api_router.include_router(task.router)
 
 # Системные endpoints тоже туда
 @api_router.get("/")

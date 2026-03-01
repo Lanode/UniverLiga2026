@@ -40,41 +40,6 @@ class UserLink(BaseModel):
     id_parent: int
     id_child: int
 
-# Item Schemas
-class ItemBase(BaseModel):
-    title: str
-    description: Optional[str] = None
-    completed: bool = False
-
-
-class ItemCreate(ItemBase):
-    pass
-
-
-class ItemUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    completed: Optional[bool] = None
-
-
-class ItemInDB(ItemBase):
-    id: int
-    owner_id: int
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
-
-
-class Item(ItemInDB):
-    pass
-
-
-class ItemWithOwner(Item):
-    owner: User
-
-
 # Token Schemas
 class Token(BaseModel):
     access_token: str
