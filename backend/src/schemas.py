@@ -1,3 +1,5 @@
+from symtable import Class
+
 from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional, List
 from datetime import datetime
@@ -166,3 +168,12 @@ class FeedbackResponseWithRelations(FeedbackResponse):
 # Update forward references after all classes are defined
 FeedbackWithRelations.model_rebuild()
 FeedbackResponseWithRelations.model_rebuild()
+
+#Task
+
+class Task(BaseModel):
+    id: int
+
+class TaskLink(BaseModel):
+    task_id: int
+    user_id: int
