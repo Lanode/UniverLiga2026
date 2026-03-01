@@ -20,9 +20,11 @@ async def create_quastionare(
 @router.get("/{item_id}")
 async def read_quastionare(
         item_id: int,
-        current_user: schemas.User = Depends(get_current_active_user)
+        current_user: schemas.User = Depends(get_current_active_user),
+        db: AsyncSession = Depends(get_db)
 ):
-    return {"status": item_id}
+    result = await get_all_questions(db, item_id)
+    return {"result": result}
 
 
 async def get_all_questions(db: AsyncSession, quastionare_id: int):
