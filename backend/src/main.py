@@ -15,8 +15,9 @@ app = FastAPI(
     title=settings.APP_NAME,
     description="UniverLiga Backend API with JWT Authentication",
     version="2.0.0",
-    docs_url="/api/v2/docs",
-    redoc_url="/api/v2/redoc"
+    root_path="/api/v1" ,
+    docs_url="/docs",
+    redoc_url="/redoc"
 )
 
 # Async function to create database tables
