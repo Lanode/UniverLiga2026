@@ -24,16 +24,19 @@ async def read_quastionare(
         db: AsyncSession = Depends(get_db)
 ):
     result = await get_all_questions(db, item_id)
-    return {"result": result}
+    return result
 
-
-async def get_all_questions(db: AsyncSession, quastionare_id: int):
+async def get_all_questions(
+        quastionare_id: int,
+        current_user: schemas.User = Depends(get_current_active_user),
+        db: AsyncSession = Depends(get_db)
+):
     result = await db.execute(
         select(Question).where(Question.quastionare_id == quastionare_id)
     )
     return result.scalars().all()
 
-@router.post("/send")
+@router.post("{item_id}/send")
 async def send_answer_for_quastionare(
         answer: schemas.Quastionare,
         current_user: schemas.User = Depends(get_current_active_user),

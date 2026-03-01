@@ -75,6 +75,7 @@ class FeedbackBase(BaseModel):
     feedback_type: FeedbackType
     comment: str
     subcategories: list['FeedbackSubcategory']
+    user_to_id: int
 
 
 class FeedbackCreate(FeedbackBase):

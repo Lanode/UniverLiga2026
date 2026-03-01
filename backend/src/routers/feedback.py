@@ -8,7 +8,7 @@ from sqlalchemy import select
 from ..models import Feedback
 from ..database import get_db
 from ..schemas import FeedbackResponse
-from ..models.feedback import FeedbackSubcategory
+from ..models.feedback import FeedbackSubcategory, feedback_subcategory_association
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 
@@ -18,7 +18,20 @@ async def create_feedback(
         current_user: schemas.User = Depends(get_current_active_user),
         db: AsyncSession = Depends(get_db)
 ):
-    return {"status": "created"}
+    feedback_new = Feedback(
+        feedback_type= feedback.feedback_type,
+        comment = feedback.comment,
+        user_id = current_user.id,
+        user_to_id=feedback.user_to_id,
+        allow_feedback=False
+    )
+    db.add(feedback_new)
+    await db.commit()
+    await db.refresh(feedback_new)
+
+    for sub in feedback.subcategories:
+        await db.execute(feedback_subcategory_association.insert().values((feedback_new.id,sub.id)))
+    return feedback_new
 
 @router.get("/")
 async def get_feedback(

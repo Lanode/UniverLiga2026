@@ -13,9 +13,9 @@ from ..database import Base
 
 # Enum для типов фидбека
 class FeedbackType(PyEnum):
-    NEGATIVE = "negative"
-    POSITIVE = "positive"
-    NEUTRAL = "neutral"
+    negative = "negative"
+    positive = "positive"
+    neutral = "neutral"
 
 
 # Таблица ассоциаций для many-to-many связи между Feedback и FeedbackSubcategory
