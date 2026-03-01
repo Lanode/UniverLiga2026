@@ -35,3 +35,10 @@ class User(Base):
     feedback_responses: Mapped[List["FeedbackResponse"]] = relationship(
         "FeedbackResponse", back_populates="responder", cascade="all, delete-orphan"
     )
+
+class Link(Base):
+    __tablename__ = "users_links"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    id_parent: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    id_child: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)

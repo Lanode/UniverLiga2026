@@ -34,8 +34,6 @@ services:
       - traefik.http.routers.backend.rule=Host(`univerliga2026.flaystw.ru`) && PathPrefix(`/api`)
       - traefik.http.routers.backend.priority=100
       - traefik.http.services.backend.loadbalancer.server.port=8000
-    volumes:
-      - .backend/data:/app/data
       # - traefik.http.routers.backend.tls.certresolver=letsencrypt
       # - traefik.http.routers.backend.tls=true
 
