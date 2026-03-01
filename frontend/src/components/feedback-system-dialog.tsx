@@ -29,6 +29,108 @@ type Survey = {
   extraCount: number;
 };
 
+type QualityAttribute = {
+  id: string;
+  text: string;
+  icon: string;
+};
+
+const POSITIVE_QUALITIES: QualityAttribute[] = [
+  {
+    id: "pos-1",
+    text: "Подробно объяснил(-а)",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/114a801cc46463b827a2fb20b09fa4aa3353ec06?width=51",
+  },
+  {
+    id: "pos-2",
+    text: "Написал(-а) хорошее ТЗ",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/ea36b16f1d80d02ba82041b5afde880cecf487e8?width=51",
+  },
+  {
+    id: "pos-3",
+    text: "Предупредил(-а) риски",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/0e92c03c8d49aaa4ecfc58824bf688fc3f830de2?width=49",
+  },
+  {
+    id: "pos-4",
+    text: "Отличноработал(-а) в команде",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/aabd7c6e84f08e90aaf2e4032402837eb18a3aef?width=49",
+  },
+  {
+    id: "pos-5",
+    text: "Соблюдал(-а) договорённости",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/4eacbb513c9abba4b43f0f146671e2374ac9a63d?width=49",
+  },
+  {
+    id: "pos-6",
+    text: "Высокая экспертность",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/75061486c7feb63c2a71adf337aa653cfbb6f88f?width=51",
+  },
+  {
+    id: "pos-7",
+    text: "Сдал(-а) вовремя",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/ea36b16f1d80d02ba82041b5afde880cecf487e8?width=51",
+  },
+  {
+    id: "pos-8",
+    text: "Учел(-ла) все пожелания",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/cb733ebffca3dbdbf43e7ea3f3532d6e46545c80?width=51",
+  },
+  {
+    id: "pos-9",
+    text: "Быстро включился(-ась) в работу",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/4eacbb513c9abba4b43f0f146671e2374ac9a63d?width=49",
+  },
+];
+
+const NEGATIVE_QUALITIES: QualityAttribute[] = [
+  {
+    id: "neg-1",
+    text: "Низкое качество работы",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/75061486c7feb63c2a71adf337aa653cfbb6f88f?width=51",
+  },
+  {
+    id: "neg-2",
+    text: "Допустил(-а) ошибки",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/114a801cc46463b827a2fb20b09fa4aa3353ec06?width=51",
+  },
+  {
+    id: "neg-3",
+    text: "Не уложился(-ась) в сроки",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/ea36b16f1d80d02ba82041b5afde880cecf487e8?width=51",
+  },
+  {
+    id: "neg-4",
+    text: "Задержал(-а) выполнение",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/aabd7c6e84f08e90aaf2e4032402837eb18a3aef?width=49",
+  },
+  {
+    id: "neg-5",
+    text: "Часто срывал(-а) дедлайны",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/0e92c03c8d49aaa4ecfc58824bf688fc3f830de2?width=49",
+  },
+  {
+    id: "neg-6",
+    text: "Медленно выполнял(-а) задачу",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/4eacbb513c9abba4b43f0f146671e2374ac9a63d?width=49",
+  },
+  {
+    id: "neg-7",
+    text: "Не предупредил(-а) о задержке",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/75061486c7feb63c2a71adf337aa653cfbb6f88f?width=51",
+  },
+  {
+    id: "neg-8",
+    text: "Не сообщил(-а) о проблемах заранее",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/ea36b16f1d80d02ba82041b5afde880cecf487e8?width=51",
+  },
+  {
+    id: "neg-9",
+    text: "Не учитывал(-а) обратную связь",
+    icon: "https://api.builder.io/api/v1/image/assets/TEMP/0e92c03c8d49aaa4ecfc58824bf688fc3f830de2?width=49",
+  },
+];
+
 const INITIAL_SURVEYS: Survey[] = [
   {
     id: "1",
@@ -56,6 +158,8 @@ export function FeedbackSystemDialog() {
   const [surveysExportFormat, setSurveysExportFormat] = useState("csv");
   const [surveys, setSurveys] = useState<Survey[]>(INITIAL_SURVEYS);
   const [selectedSurveys, setSelectedSurveys] = useState<Set<string>>(new Set());
+  const [positiveQualities, setPositiveQualities] = useState<QualityAttribute[]>(POSITIVE_QUALITIES);
+  const [negativeQualities, setNegativeQualities] = useState<QualityAttribute[]>(NEGATIVE_QUALITIES);
 
   const handleGenerateReport = () => {
     console.log({ department: selectedDepartment, employee: selectedEmployee, startDate, endDate });
@@ -89,7 +193,7 @@ export function FeedbackSystemDialog() {
   const tabs = [
     { id: "statistics", label: "Статистика" },
     { id: "surveys", label: "Опросы" },
-    { id: "settings", label: "Настройки" },
+    { id: "settings", label: "Настройки подкатегорий" },
   ];
 
   return (
@@ -337,8 +441,73 @@ export function FeedbackSystemDialog() {
 
           {/* ─── Settings Tab ─── */}
           {activeTab === "settings" && (
-            <div className="text-center text-[var(--general-muted-foreground)] py-12">
-              Настройки — раздел в разработке
+            <div className="space-y-6">
+              {/* Positive Qualities Section */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium text-[var(--general-foreground)]">
+                  Положительные качества
+                </h3>
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+                  {positiveQualities.map((quality) => (
+                    <div
+                      key={quality.id}
+                      className="quality-card flex flex-col items-center justify-center gap-2 p-4 rounded-lg border border-[var(--general-border)] bg-white hover:bg-[var(--unofficial-ghost-hover)] transition-colors cursor-pointer"
+                    >
+                      <img
+                        src={quality.icon}
+                        alt={quality.text}
+                        className="w-6 h-6 object-contain"
+                      />
+                      <span className="text-center text-xs font-normal leading-tight text-[var(--general-foreground)]">
+                        {quality.text}
+                      </span>
+                    </div>
+                  ))}
+                  <button className="quality-add-btn flex flex-col items-center justify-center gap-2 p-4 rounded-lg border border-[var(--general-border)] bg-white hover:bg-[var(--unofficial-ghost-hover)] transition-colors text-center">
+                    <Plus size={20} className="text-[var(--general-foreground)]" />
+                    <span className="text-xs font-normal text-[var(--general-foreground)]">
+                      Добавить подкатегорию
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Negative Qualities Section */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-medium text-[var(--general-foreground)]">
+                  Негативные качества качества
+                </h3>
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+                  {negativeQualities.map((quality) => (
+                    <div
+                      key={quality.id}
+                      className="quality-card flex flex-col items-center justify-center gap-2 p-4 rounded-lg border border-[var(--general-border)] bg-white hover:bg-[var(--unofficial-ghost-hover)] transition-colors cursor-pointer"
+                    >
+                      <img
+                        src={quality.icon}
+                        alt={quality.text}
+                        className="w-6 h-6 object-contain"
+                      />
+                      <span className="text-center text-xs font-normal leading-tight text-[var(--general-foreground)]">
+                        {quality.text}
+                      </span>
+                    </div>
+                  ))}
+                  <button className="quality-add-btn flex flex-col items-center justify-center gap-2 p-4 rounded-lg border border-[var(--general-border)] bg-white hover:bg-[var(--unofficial-ghost-hover)] transition-colors text-center">
+                    <Plus size={20} className="text-[var(--general-foreground)]" />
+                    <span className="text-xs font-normal text-[var(--general-foreground)]">
+                      Добавить подкатегорию
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <div className="flex justify-start pt-4">
+                <Button className="bg-[var(--general-accent)] hover:bg-[#4a7fd7] text-white">
+                  Сохранить изменения
+                </Button>
+              </div>
             </div>
           )}
         </div>
