@@ -1,47 +1,31 @@
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CrmSidebar } from "@/components/crm-sidebar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
-// Типы отзывов с цветами
-const FEEDBACK_TYPES = [
-  { value: "positive", label: "Положительный", color: "#10B981" }, // зеленый
-  { value: "negative", label: "Отрицательный", color: "#EF4444" }, // красный
-  { value: "neutral", label: "Нейтральный", color: "#6B7280" }, // серый
-  { value: "suggestion", label: "Предложение", color: "#3B82F6" }, // синий
-];
-
-// Подкатегории
-const SUBCATEGORIES = [
-  { value: "communication", label: "Коммуникация" },
-  { value: "quality", label: "Качество работы" },
-  { value: "deadlines", label: "Соблюдение сроков" },
-  { value: "teamwork", label: "Работа в команде" },
-  { value: "professionalism", label: "Профессионализм" },
-];
-
-// Компонент цветной точки
-function ColorDot({ color }: { color: string }) {
-  return (
-    <div 
-      className="w-3 h-3 rounded-full mr-2 flex-shrink-0"
-      style={{ backgroundColor: color }}
-    />
-  );
-}
+import { EmotionSelector } from "@/components/emotion-selector";
+import { SubcategoryGrid } from "@/components/subcategory-grid";
+import {
+  EMOTION_SUBCATEGORIES,
+  type EmotionType,
+} from "@/constants/feedback-data";
+import "./feedback-page.css";
 
 export function FeedbackPage() {
   const { id, personId } = useParams<{ id: string; personId: string }>();
   const navigate = useNavigate();
+
+  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(
+    null
+  );
+  const [selectedSubcategories, setSelectedSubcategories] = useState<
+    Set<string>
+  >(new Set());
+  const [comment, setComment] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClose = () => {
     navigate(`/task/${id}/users`);
@@ -51,25 +35,74 @@ export function FeedbackPage() {
     navigate(`/task/${id}/users`);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Здесь будет логика отправки формы
-    console.log("Форма отправлена");
-    // Перенаправление на страницу успешной отправки
-    navigate(`/task/${id}/feedback/${personId}/success`);
+  const handleEmotionSelect = (emotion: EmotionType) => {
+    setSelectedEmotion(emotion);
+    // Clear subcategories when emotion changes
+    setSelectedSubcategories(new Set());
   };
+
+  const handleToggleSubcategory = (id: string) => {
+    const newSelected = new Set(selectedSubcategories);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedSubcategories(newSelected);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedEmotion) {
+      alert("Пожалуйста, выберите тип отзыва");
+      return;
+    }
+
+    if (selectedSubcategories.size === 0) {
+      alert("Пожалуйста, выберите хотя бы одну подкатегорию");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Prepare feedback data
+      const feedbackData = {
+        personId,
+        taskId: id,
+        emotion: selectedEmotion,
+        subcategories: Array.from(selectedSubcategories),
+        comment,
+        isAnonymous,
+      };
+
+      // TODO: Send to API
+      console.log("Submitting feedback:", feedbackData);
+
+      // For now, navigate to success page
+      navigate(`/task/${id}/feedback/${personId}/success`);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      alert("Ошибка при отправке отзыва. Пожалуйста, попробуйте снова.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const currentSubcategories = selectedEmotion
+    ? EMOTION_SUBCATEGORIES[selectedEmotion]
+    : [];
 
   return (
     <div className="crm-layout">
       <CrmSidebar />
 
       <main className="crm-main">
-        <div className="feedback-card">
-          {/* Header */}
-          <div className="feedback-card-header">
-            <h2 className="feedback-card-title">
-              Калинина Ирина
-            </h2>
+        <div className="feedback-dialog">
+          {/* Dialog Header */}
+          <div className="feedback-dialog-header">
+            <h2 className="feedback-dialog-title">Калинина Ирина</h2>
             <button
               onClick={handleClose}
               className="feedback-close-btn"
@@ -79,84 +112,78 @@ export function FeedbackPage() {
             </button>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            {/* Feedback Type Select with colored dots */}
-            <div className="space-y-2">
-              <Label htmlFor="feedback-type" className="text-sm font-medium">
-                Тип отзыва
-              </Label>
-              <Select>
-                <SelectTrigger id="feedback-type" className="w-full">
-                  <SelectValue placeholder="Выберете из списка" />
-                </SelectTrigger>
-                <SelectContent className="max-h-60">
-                  {FEEDBACK_TYPES.map((type) => (
-                    <SelectItem 
-                      key={type.value} 
-                      value={type.value}
-                      className="flex items-center py-2"
-                    >
-                      <div className="flex items-center">
-                        <ColorDot color={type.color} />
-                        <span>{type.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {/* Form Content */}
+          <form onSubmit={handleSubmit} className="feedback-form">
+            {/* Emotion Type Label */}
+            <div className="form-field">
+              <Label className="form-label">Тип отзыва</Label>
             </div>
 
-            {/* Subcategory Select */}
-            <div className="space-y-2">
-              <Label htmlFor="subcategory" className="text-sm font-medium">
-                Подкатегория
-              </Label>
-              <Select>
-                <SelectTrigger id="subcategory" className="w-full">
-                  <SelectValue placeholder="Выберете из списка" />
-                </SelectTrigger>
-                <SelectContent className="max-h-60">
-                  {SUBCATEGORIES.map((category) => (
-                    <SelectItem 
-                      key={category.value} 
-                      value={category.value}
-                      className="py-2"
-                    >
-                      {category.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Emotion Selector */}
+            <EmotionSelector
+              selectedEmotion={selectedEmotion}
+              onSelectEmotion={handleEmotionSelect}
+            />
+
+            {/* Subcategories Section */}
+            {selectedEmotion && (
+              <div className="form-field">
+                <Label className="form-label">Подкатегория</Label>
+
+                <SubcategoryGrid
+                  subcategories={currentSubcategories}
+                  selectedSubcategories={selectedSubcategories}
+                  onToggleSubcategory={handleToggleSubcategory}
+                  emotion={selectedEmotion}
+                />
+              </div>
+            )}
 
             {/* Comment Textarea */}
-            <div className="space-y-2">
-              <Label htmlFor="comment" className="text-sm font-medium">
+            <div className="form-field">
+              <Label htmlFor="comment" className="form-label">
                 Комментарий
               </Label>
               <Textarea
                 id="comment"
                 placeholder="Напишите ваш комментарий здесь"
-                className="min-h-[100px] resize-y"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                className="feedback-textarea"
               />
             </div>
 
-            {/* Footer */}
-            <div className="flex justify-end gap-3 pt-6 border-t border-[#E5E5E5]">
+            {/* Anonymous Checkbox */}
+            <div className="anonymous-checkbox-wrapper">
+              <input
+                type="checkbox"
+                id="anonymous"
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+                className="anonymous-checkbox"
+              />
+              <label htmlFor="anonymous" className="anonymous-label">
+                Сделать отзыв анонимным
+              </label>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="feedback-footer">
               <Button
                 type="button"
                 variant="outline"
                 onClick={handleCancel}
-                className="px-6"
+                className="feedback-btn-cancel"
+                disabled={isSubmitting}
               >
                 Отмена
               </Button>
               <Button
                 type="submit"
-                className="px-6 bg-[#589CFF] hover:bg-[#589CFF]/90 text-white"
+                className="feedback-btn-submit"
+                disabled={isSubmitting}
               >
-                Отправить
+                {isSubmitting ? "Отправка..." : "Отправить"}
               </Button>
             </div>
           </form>
