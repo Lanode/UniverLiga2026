@@ -56,7 +56,11 @@ export function FeedbackPage() {
 
   const handleToggleSubcategory = (subId: string) => {
     const newSet = new Set(selectedSubcategories);
-    newSet.has(subId) ? newSet.delete(subId) : newSet.add(subId);
+    if (newSet.has(subId)) {
+      newSet.delete(subId);
+    } else {
+      newSet.add(subId);
+    }
     setSelectedSubcategories(newSet);
   };
 
