@@ -13,10 +13,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export function FeedbackPage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id, personId } = useParams<{ id: string; personId: string }>();
   const navigate = useNavigate();
-
+  console.log(personId)
   const handleClose = () => {
     navigate(`/task/${id}/users`);
   };
