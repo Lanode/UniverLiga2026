@@ -28,10 +28,10 @@ services:
       file: docker-compose.yml
       service: backend
     environment:
-      - ALLOWED_ORIGINS=https://univerliga2026.flaystw.ru
+      - ALLOWED_ORIGINS=https://newuniverliga.flaystw.ru
     labels:
       - traefik.enable=true
-      - traefik.http.routers.backend.rule=Host(`univerliga2026.flaystw.ru`) && PathPrefix(`/api`)
+      - traefik.http.routers.backend.rule=Host(`newuniverliga.flaystw.ru`) && PathPrefix(`/api`)
       - traefik.http.routers.backend.priority=100
       - traefik.http.services.backend.loadbalancer.server.port=8000
       # - traefik.http.routers.backend.tls.certresolver=letsencrypt
@@ -42,10 +42,10 @@ services:
       file: docker-compose.yml
       service: frontend
     environment:
-      - VITE_API_URL=https://univerliga2026.flaystw.ru/api/v1
+      - VITE_API_URL=https://newuniverliga.flaystw.ru/api/v1
     labels:
       - traefik.enable=true
-      - traefik.http.routers.frontend.rule=Host(`univerliga2026.flaystw.ru`)
+      - traefik.http.routers.frontend.rule=Host(`newuniverliga.flaystw.ru`)
       - traefik.http.routers.frontend.priority=1
       # - traefik.http.routers.frontend.tls.certresolver=letsencrypt
       # - traefik.http.routers.frontend.tls=true
