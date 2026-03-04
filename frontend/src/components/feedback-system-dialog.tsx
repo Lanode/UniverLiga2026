@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -20,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import ReviewChart from "./review-chart";
 
 type Survey = {
   id: string;
@@ -236,7 +236,7 @@ export function FeedbackSystemDialog() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                 <div className="max-w-xs">
                   <Label className="text-sm font-medium mb-2 block">Отдел</Label>
-                  <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                  <Select value={selectedDepartment} onValueChange={setSelectedDepartment} disabled>
                     <SelectTrigger>
                       <SelectValue placeholder="Выберете необходимый отдел" />
                     </SelectTrigger>
@@ -248,7 +248,7 @@ export function FeedbackSystemDialog() {
                 </div>
                 <div className="max-w-xs">
                   <Label className="text-sm font-medium mb-2 block">Сотрудники</Label>
-                  <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+                  <Select value={selectedEmployee} onValueChange={setSelectedEmployee} disabled>
                     <SelectTrigger>
                       <SelectValue placeholder="Выберете необходимого сотрудника" />
                     </SelectTrigger>
@@ -261,7 +261,7 @@ export function FeedbackSystemDialog() {
                 <div className="max-w-xs">
                   <Label className="text-sm font-medium mb-2 block">Начало</Label>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#525252] w-4 h-4 pointer-events-none" />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#525252] w-4 h-4 pointer-events-none"/>
                     <Input
                       type="text"
                       placeholder="ДД.ММ.ГГГГ"
@@ -296,54 +296,9 @@ export function FeedbackSystemDialog() {
 
               {/* Charts */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="overflow-hidden">
-                  <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--general-border)]">
-                    <svg className="w-3 h-3 shrink-0" viewBox="0 0 12 12" fill="none">
-                      <path d="M1.125 9.5V1.5C1.125 1.293 1.293 1.125 1.5 1.125C1.707 1.125 1.875 1.293 1.875 1.5V9.5C1.875 9.666 1.941 9.825 2.058 9.942C2.175 10.059 2.334 10.125 2.5 10.125H10.5C10.707 10.125 10.875 10.293 10.875 10.5C10.875 10.707 10.707 10.875 10.5 10.875H2.5C2.135 10.875 1.786 10.73 1.528 10.472C1.27 10.214 1.125 9.865 1.125 9.5Z" fill="#737373"/>
-                      <path d="M9.125 3C9.125 2.931 9.069 2.875 9 2.875H8C7.931 2.875 7.875 2.931 7.875 3V8C7.875 8.069 7.931 8.125 8 8.125H9C9.069 8.125 9.125 8.069 9.125 8V3ZM9.875 8C9.875 8.483 9.483 8.875 9 8.875H8C7.517 8.875 7.125 8.483 7.125 8V3C7.125 2.517 7.517 2.125 8 2.125H9C9.483 2.125 9.875 2.517 9.875 3V8Z" fill="#737373"/>
-                      <path d="M5.125 4.5C5.125 4.431 5.069 4.375 5 4.375H4C3.931 4.375 3.875 4.431 3.875 4.5V8C3.875 8.069 3.931 8.125 4 8.125H5C5.069 8.125 5.125 8.069 5.125 8V4.5ZM5.875 8C5.875 8.483 5.483 8.875 5 8.875H4C3.517 8.875 3.125 8.483 3.125 8V4.5C3.125 4.017 3.517 3.625 4 3.625H5C5.483 3.625 5.875 4.017 5.875 4.5V8Z" fill="#737373"/>
-                    </svg>
-                    <span className="text-xs text-[var(--general-muted-foreground)]">
-                      Количество отзывов по выбранному периоду
-                    </span>
-                  </div>
-                  <div className="flex p-6 gap-4" style={{ height: 280 }}>
-                    <div className="flex flex-col justify-between items-end text-xs text-[var(--general-muted-foreground)] shrink-0">
-                      {[100,90,80,70,60,50,40,30,20,10,0].map((v) => (
-                        <span key={v}>{v}</span>
-                      ))}
-                    </div>
-                    <div className="flex-1 flex flex-col justify-between">
-                      {[100,90,80,70,60,50,40,30,20,10,0].map((v) => (
-                        <div key={v} className="border-t border-[var(--unofficial-border-1)] w-full" />
-                      ))}
-                    </div>
-                  </div>
-                </Card>
+                <ReviewChart data={[{label: '1', value: 10}]} header="Количество отзывов по выбранному периоду"></ReviewChart>
 
-                <Card className="overflow-hidden">
-                  <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--general-border)]">
-                    <svg className="w-3 h-3 shrink-0" viewBox="0 0 12 12" fill="none">
-                      <path d="M1.125 9.5V1.5C1.125 1.293 1.293 1.125 1.5 1.125C1.707 1.125 1.875 1.293 1.875 1.5V9.5C1.875 9.666 1.941 9.825 2.058 9.942C2.175 10.059 2.334 10.125 2.5 10.125H10.5C10.707 10.125 10.875 10.293 10.875 10.5C10.875 10.707 10.707 10.875 10.5 10.875H2.5C2.135 10.875 1.786 10.73 1.528 10.472C1.27 10.214 1.125 9.865 1.125 9.5Z" fill="#737373"/>
-                      <path d="M9.235 4.235C9.381 4.088 9.619 4.088 9.765 4.235C9.912 4.381 9.912 4.619 9.765 4.765L7.265 7.265C7.119 7.412 6.881 7.412 6.735 7.265L5 5.53L3.765 6.765C3.619 6.912 3.381 6.912 3.235 6.765C3.088 6.619 3.088 6.381 3.235 6.235L4.735 4.735L4.763 4.709C4.91 4.589 5.128 4.598 5.265 4.735L7 6.47L9.235 4.235Z" fill="#737373"/>
-                    </svg>
-                    <span className="text-xs text-[var(--general-muted-foreground)]">
-                      Статистика положительных и отрицательных отзывов
-                    </span>
-                  </div>
-                  <div className="flex p-6 gap-4" style={{ height: 280 }}>
-                    <div className="flex flex-col justify-between items-end text-xs text-[var(--general-muted-foreground)] shrink-0">
-                      {[100,90,80,70,60,50,40,30,20,10,0].map((v) => (
-                        <span key={v}>{v}</span>
-                      ))}
-                    </div>
-                    <div className="flex-1 flex flex-col justify-between">
-                      {[100,90,80,70,60,50,40,30,20,10,0].map((v) => (
-                        <div key={v} className="border-t border-[var(--unofficial-border-1)] w-full" />
-                      ))}
-                    </div>
-                  </div>
-                </Card>
+                <ReviewChart data={[{label: '1', value: 100}]} header="Статистика положительных и отрицательных отзывов"></ReviewChart>
               </div>
 
               {/* Export Section */}
