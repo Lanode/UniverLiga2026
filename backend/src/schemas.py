@@ -110,6 +110,7 @@ class FeedbackWithRelations(Feedback):
 class FeedbackSubcategoryBase(BaseModel):
     text: str
     feedback_type_relation: FeedbackType
+    department: str
 
 
 class FeedbackSubcategoryCreate(FeedbackSubcategoryBase):
@@ -119,6 +120,7 @@ class FeedbackSubcategoryCreate(FeedbackSubcategoryBase):
 class FeedbackSubcategoryUpdate(BaseModel):
     text: Optional[str] = None
     feedback_type_relation: Optional[FeedbackType] = None
+    department: Optional[str] = None
 
 
 class FeedbackSubcategoryInDB(FeedbackSubcategoryBase):

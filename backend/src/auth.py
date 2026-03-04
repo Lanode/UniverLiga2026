@@ -123,3 +123,25 @@ async def get_current_superuser(
             detail="Not enough permissions"
         )
     return current_user
+
+
+async def get_user_with_subordinates(
+    current_user: User = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db)
+) -> User:
+    """Get the current user only if they have subordinates."""
+    from .models.user import Link
+    
+    # Check if user has any subordinates (children in Link table)
+    result = await db.execute(
+        select(Link).where(Link.id_parent == current_user.id)
+    )
+    subordinates = result.scalars().all()
+    
+    if not subordinates:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied. Only users with subordinates can perform this action."
+        )
+    
+    return current_user
